@@ -148,7 +148,6 @@ public:
 
     for (int i = 0; i < (_length + 1); i++) {
       (_data_head + i)->~T();
-      std::cout << "Destructor called for element: " << i << '\n';
     }
   }
 
