@@ -222,6 +222,12 @@ public:
     std::cout << "Key: " << key << " Located at: " << (std::size_t)key_location << '\n';
     return *std::launder(reinterpret_cast<T*>(_data + key_location * sizeof(T)));
   }
+  
+  Key FindIndex(const Key key) {
+    if (key >= N) { return 0; }
+
+    return _indices[key];
+  }
 
   void Debug() {
     for (int i = 0; i < (_length + 1); i++) {
