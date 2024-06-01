@@ -3,8 +3,13 @@
 #include <iostream> // For debugging purposes
 #include <new>
 
+class BaseVec {
+public:
+  virtual ~BaseVec() {}
+};
+
 template <typename T, typename I, std::size_t N>
-class KeyVector {
+class KeyVector : public BaseVec {
   typedef std::size_t Key;
 
   inline void CLP(const Key key) { 
@@ -136,6 +141,15 @@ public:
     // Default initialize _data[0] element
     T* _data_head = reinterpret_cast<T*>(_data);
     ::new (_data_head) T();
+  }
+
+  ~KeyVector() {
+    T* _data_head = reinterpret_cast<T*>(_data);
+
+    for (int i = 0; i < (_length + 1); i++) {
+      (_data_head + i)->~T();
+      std::cout << "Destructor called for element: " << i << '\n';
+    }
   }
 
   void Add(const Key key) {

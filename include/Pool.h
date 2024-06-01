@@ -3,6 +3,8 @@
 #include <stdlib.h>   // aligned_alloc
 #include <limits>     // numeric_limits<T>
 #include <algorithm>  // max
+#include <vector>
+
 #include <keyvector.h>
 
 const static std::size_t PAGE_SIZE = 4096;
@@ -23,11 +25,6 @@ public:
   // HSetSize - The quantity of unique ID keys this set will hold
   template<typename Type, typename Index, std::size_t HSetSize>
   KeyVector<Type, Index, HSetSize>& AddKeyVec() {
-
-    // TODO: Ensure robustness for all alignments and sizes for T & I
-    // TODO: Likely need further guarantees
-    // Really shouldn't assert (which terminates without cleanup),
-    // Instead return a nullptr HSet& . This would be Option<mut HSet&, None> in Rust
     assert (alignof(Index) < PAGE_SIZE);
     assert (alignof(Type) < PAGE_SIZE);
     assert (sizeof(Index) < PAGE_SIZE);
@@ -117,11 +114,9 @@ public:
       // Need to convert tracking_ptr into appropriate type -> To use with placement new
       KeyVector<Type, Index, HSetSize>* ptr_head = reinterpret_cast<KeyVector<Type, Index, HSetSize>*>(_tracking_ptr);
 
-      // TODO: Manually calling HSet*->~HSet() destructor is necessary (under these cases)...
-      // ...If HSet needs to clean up its own resources (a reasonable assumption)
-      // This will require tracking all placement new instances
-      // Likely use a HashMap of some kind
       KeyVector<Type, Index, HSetSize>* constructedObject = ::new (ptr_head) KeyVector<Type, Index, HSetSize>;
+
+      _ptr_list.push_back(reinterpret_cast<BaseVec*>(constructedObject));
      
       // We need to keep track of all allocated bytes (for future space calculations)
       _filled_bytes += TotalBytesNeeded;
@@ -185,10 +180,18 @@ public:
   }
   ~Pool() {
     std::cout << "Freeing memory\n";
+
+    for (auto ptr : _ptr_list) {
+      ptr->~BaseVec();
+    }
+
+    // Deallocate the entire memory block
     free(_lead_ptr); 
   }
 
 private:
+  std::vector<BaseVec*> _ptr_list;
+
   void* _lead_ptr = nullptr;
   void* _tracking_ptr = nullptr;
   std::size_t _filled_bytes = 0;
