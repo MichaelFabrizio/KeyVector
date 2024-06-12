@@ -308,6 +308,34 @@ public:
 		castles->Clear();
 	}
 
+	void Test_Remove_Lesser_Key_Branch_1() {
+		auto& indices = castles->GetIndexArray();
+
+		castles->AddRange(1, 51);
+		
+		castles->Remove(28);
+
+		if (indices[28] != 50) { _status = false; }
+		if (indices[50] != 28) { _status = false; }
+
+		castles->Clear();
+	}
+	
+	void Test_Remove_Lesser_Key_Branch_2() {
+		auto& indices = castles->GetIndexArray();
+		
+		castles->AddRange(1, 45);
+		castles->Add(50);
+
+		castles->Remove(28);
+		
+		if (indices[28] != 50)	{ _status = false; }
+		if (indices[45] != 0)		{ _status = false; }
+		if (indices[50] != 28)	{ _status = false; }
+
+		castles->Clear();
+	}
+
 	bool Return_Test_Status() {
 		return _status;
 	}

@@ -142,6 +142,7 @@ class KeyVector : public BaseVec {
 
     auto end_key = _indices[_length];
     _indices[key] = end_key;
+    _indices[end_key] = key;
 
     // Call destructor on key to be removed
     (_data_head + key)->~T();
@@ -151,13 +152,10 @@ class KeyVector : public BaseVec {
 
     if (end_key != _length) {
       _indices[_length] = 0;
-      _indices[end_key] = key;
       _length--;
       return;
     }
 
-    // Implicit: end_key == _length
-    _indices[end_key] = 0;
     _length--;
   }
 
