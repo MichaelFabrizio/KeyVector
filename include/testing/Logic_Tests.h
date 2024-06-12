@@ -174,7 +174,7 @@ public:
 		if (!valid) { std::cout << "Invalid test key\n"; return; }
 
 		castles->BuildFromVector(initial_keys);
-		
+
 		valid = Try_Generate_Length_Plus_One_State(*castles, test_key, require_indexed_end_element);
 		if (!valid) { std::cout << "Unsuitable initial_keys vector\n"; _status = false; return; } // Failed to get good KeyVector state
 
@@ -211,7 +211,7 @@ public:
 		castles->Clear();
 		
 		// Use GetIndexArray() method to get underlying _indices array
-		std::array<unsigned char, 256> indices = castles->GetIndexArray();
+		auto& indices = castles->GetIndexArray(); // Type: std::array<unsigned char, 256>&
 		
 		// Every value in _indices must equal zero now.
 		for (auto index : indices) {
@@ -219,6 +219,50 @@ public:
 				_status = false;
 			}
 		}
+	}
+
+	// Test case: Remove(25). Where _indices[_length] == 25
+	void Test_Remove_Greater_Key_Branch_1() {
+		std::vector<std::size_t> test_keys { 17, 2, 3, 45, 5, 6, 15, 25 };
+		castles->BuildFromVector(test_keys);
+		auto& indices = castles->GetIndexArray(); // Type: std::array<unsigned char, 256>&
+		
+		auto index = castles->FindIndex(25);
+		auto& castle = castles->Find(25);
+		castle.damage_level = 25;
+		castle.armor_level = 52;
+
+		castles->Remove(25);
+
+		std::cout << "Index: " << index << '\n';
+		if (indices[index] != 0) {
+			std::cout << "Endpoint not cleared, index: " << (std::size_t)indices[index] << '\n';
+			_status = false;
+		}
+		castles->Clear();
+		
+	}
+
+	void Test_Remove_Greater_Key_Branch_2(std::vector<Key>& initial_keys, Key test_key) {
+		bool valid = Is_Valid_Initial_Vector(initial_keys, test_key);
+		if (!valid) { std::cout << "Invalid test key\n"; return; }
+		
+		castles->BuildFromVector(initial_keys);
+		auto& indices = castles->GetIndexArray(); // Type: std::array<unsigned char, 256>&
+
+		Key test_key_index = castles->FindIndex(test_key);
+		
+		// TEST 1: 
+		if (test_key_index == castles->Length()) { 
+			std::cout << "[Test_Remove_Lesser_Key_Branch_2] Please fix initial_keys\n";
+			_status = false;
+			return;
+		}
+
+		// Implicit: _indices[test_key] < _length
+		// Ready to begin test
+
+
 	}
 
 	bool Return_Test_Status() {

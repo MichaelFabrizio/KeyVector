@@ -150,6 +150,7 @@ class KeyVector : public BaseVec {
     _data_head[key] = _data_head[_length];
 
     if (end_key != _length) {
+      _indices[_length] = 0;
       _indices[end_key] = key;
       _length--;
       return;
@@ -184,6 +185,7 @@ class KeyVector : public BaseVec {
     _data_head[key_location] = _data_head[_length];
 
     if (end_key != _length) {
+      _indices[_length] = 0;
       _indices[end_key] = key_location;
       _length--;
       return;
@@ -346,7 +348,7 @@ public:
   std::size_t Length() const { return _length; }
   std::size_t Capacity() const { return _capacity; }
 
-  std::array<I, N> GetIndexArray() const { return _indices; }
+  const std::array<I, N>& GetIndexArray() const { return _indices; }
 
   void Debug() {
     if (_length > 1000) {
