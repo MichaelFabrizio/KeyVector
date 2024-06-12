@@ -32,10 +32,10 @@ int main()
 	test_placement_logic.Test_Checked_Greater_Than_Placement(initial_keys, primary_test_key, false);
 	
 	test_placement_logic.Test_Remove_Greater_Key_Branch_1();
+	test_placement_logic.Test_Remove_Greater_Key_Branch_2(initial_keys, primary_test_key);
 
 	//UNFINISHED:
 	//test_placement_logic.Test_Checked_Greater_Than_Placement(initial_keys, primary_test_key, true);
-	//test_placement_logic.Test_Remove_Greater_Key_Branch_2(initial_keys, primary_test_key);
 	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 

@@ -234,9 +234,11 @@ public:
 
 		castles->Remove(25);
 
-		std::cout << "Index: " << index << '\n';
 		if (indices[index] != 0) {
 			std::cout << "Endpoint not cleared, index: " << (std::size_t)indices[index] << '\n';
+			_status = false;
+		}
+		if (indices[25] != 0) {
 			_status = false;
 		}
 		castles->Clear();
@@ -249,11 +251,13 @@ public:
 		
 		castles->BuildFromVector(initial_keys);
 		auto& indices = castles->GetIndexArray(); // Type: std::array<unsigned char, 256>&
+		auto length = castles->Length();
 
 		Key test_key_index = castles->FindIndex(test_key);
+		Key end_key = indices[length];
 		
-		// TEST 1: 
-		if (test_key_index == castles->Length()) { 
+		// MUST SKIP THIS POSSIBLE BRANCH FOR THIS TEST
+		if (test_key_index == length) { 
 			std::cout << "[Test_Remove_Lesser_Key_Branch_2] Please fix initial_keys\n";
 			_status = false;
 			return;
@@ -262,7 +266,13 @@ public:
 		// Implicit: _indices[test_key] < _length
 		// Ready to begin test
 
+		castles->Remove(test_key);
 
+		if (indices[test_key_index] != end_key) { _status = false; }
+		if (indices[length] != 0)								{ _status = false; }
+		if (indices[test_key] != 0)							{ _status = false; }
+
+		castles->Clear();
 	}
 
 	bool Return_Test_Status() {

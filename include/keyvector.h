@@ -179,6 +179,8 @@ class KeyVector : public BaseVec {
 
     auto end_key = _indices[_length];
     _indices[key_location] = end_key;
+    _indices[end_key] = key_location;
+    _indices[key] = 0;
     
     (_data_head + key_location)->~T();
 
@@ -186,12 +188,10 @@ class KeyVector : public BaseVec {
 
     if (end_key != _length) {
       _indices[_length] = 0;
-      _indices[end_key] = key_location;
       _length--;
       return;
     }
 
-    _indices[end_key] = 0;
     _length--;
   }
 
