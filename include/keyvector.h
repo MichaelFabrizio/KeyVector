@@ -330,6 +330,12 @@ public:
       // Call each destructor for T
       (_data_head + i)->~T();
 
+      // Clear extra indexed data
+      Key stored_key = _indices[i];
+      if (stored_key != i) {
+        _indices[stored_key] = 0;
+      }
+
       // Must reset all indices
       _indices[i] = 0;
     }
@@ -339,6 +345,8 @@ public:
 
   std::size_t Length() const { return _length; }
   std::size_t Capacity() const { return _capacity; }
+
+  std::array<I, N> GetIndexArray() const { return _indices; }
 
   void Debug() {
     if (_length > 1000) {

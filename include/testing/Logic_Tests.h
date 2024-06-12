@@ -108,30 +108,20 @@ public:
 		// TEST CASE 1: AddAny() with INDEXED END ELEMENT. 
 		// In this test: _indices[7] = _indices[_Length + 1] = 1 (it is indexed)
 
-		std::vector<std::size_t> test_1_keys { 7, 2, 3, 4, 5, 6 };
-		castles->BuildFromVector(test_1_keys);
+		std::vector<std::size_t> test_keys { 7, 2, 3, 4, 5, 6 };
+		castles->BuildFromVector(test_keys);
 		
 		auto added_key = castles->AddAny();
 
 		if (castles->FindIndex(7) != 7) { _status = false; }
 		else if (added_key != 1)				{ _status = false; }
-
-		// TEST CASE 2: AddAny() with ZERO END ELEMENT
-		castles->Clear();
-		for (int i = 0; i < 10; i++) {
-			castles->AddAny();
-		}
-		
-		for (int i = 0; i < 10; i++) {
-			if (castles->FindIndex(i) != i) { _status = false; }
-		}
 		
 		castles->Clear();
 	}
 	
 	void Test_Add_Any_2() {
-		std::vector<std::size_t> test_1_keys { 7, 2, 3, 45, 5, 6, 15, 25 };
-		castles->BuildFromVector(test_1_keys);
+		std::vector<std::size_t> test_keys { 7, 2, 3, 45, 5, 6, 15, 25 };
+		castles->BuildFromVector(test_keys);
 
 		Key added_key = 0;
 		while (true) {
@@ -146,7 +136,18 @@ public:
 				added_key = castles->AddAny();
 			}
 		}
+	}
 
+	void Test_Add_Any_3() {
+		for (int i = 0; i < 10; i++) {
+			castles->AddAny();
+		}
+		
+		for (int i = 0; i < 10; i++) {
+			if (castles->FindIndex(i) != i) { _status = false; }
+		}
+		
+		castles->Clear();
 	}
 
 	void Test_Checked_Equal_To_Placement() { 
@@ -200,6 +201,24 @@ public:
 		if (!test_status) { _status = false; }
 
 		castles->Clear();
+	}
+
+	void Test_Clear() {
+		// Create an arbitrary KeyVector
+		std::vector<std::size_t> test_keys { 17, 2, 3, 45, 5, 6, 15, 25 };
+		castles->BuildFromVector(test_keys);
+
+		castles->Clear();
+		
+		// Use GetIndexArray() method to get underlying _indices array
+		std::array<unsigned char, 256> indices = castles->GetIndexArray();
+		
+		// Every value in _indices must equal zero now.
+		for (auto index : indices) {
+			if (index != 0) {
+				_status = false;
+			}
+		}
 	}
 
 	bool Return_Test_Status() {
