@@ -27,16 +27,19 @@ int main()
 	test_placement_logic.Test_Add_Any();
 	test_placement_logic.Test_Add_Any_2();
 	test_placement_logic.Test_Add_Any_3();
-
-	test_placement_logic.Test_Checked_Equal_To_Placement();
-	test_placement_logic.Test_Checked_Greater_Than_Placement(initial_keys, primary_test_key, false);
 	
+	test_placement_logic.Test_Add_Equal_Key();
+	
+	test_placement_logic.Test_Add_Greater_Key_Branch_1();
+	test_placement_logic.Test_Add_Greater_Key_Branch_2();
+	
+	test_placement_logic.Test_Add_Lesser_Key_Branch_1();
+	test_placement_logic.Test_Add_Lesser_Key_Branch_2();
+	test_placement_logic.Test_Add_Lesser_Key_Branch_3();
+
 	test_placement_logic.Test_Remove_Greater_Key_Branch_1();
 	test_placement_logic.Test_Remove_Greater_Key_Branch_2(initial_keys, primary_test_key);
 
-	//UNFINISHED:
-	//test_placement_logic.Test_Checked_Greater_Than_Placement(initial_keys, primary_test_key, true);
-	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 
 	return 0;

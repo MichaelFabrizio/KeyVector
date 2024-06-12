@@ -149,8 +149,34 @@ public:
 		
 		castles->Clear();
 	}
+	
+	void Test_Add_Greater_Key_Branch_1() {
+		castles->AddRange(1, 10);
+		castles->Add(13);
 
-	void Test_Checked_Equal_To_Placement() { 
+		auto& indices = castles->GetIndexArray();
+
+		if (indices[10] != 13) { _status = false; }
+		if (indices[13] != 10) { _status = false; }
+
+		castles->Clear();
+	}
+	
+	void Test_Add_Greater_Key_Branch_2() {
+		castles->Add(13);
+		castles->AddRange(2, 13);
+		castles->Add(25);
+
+		auto& indices = castles->GetIndexArray();
+
+		if (indices[13] != 13)	{ _status = false; }
+		if (indices[25] != 1)		{ _status = false; }
+		if (indices[1] != 25)		{ _status = false; }
+
+		castles->Clear();
+	}
+
+	void Test_Add_Equal_Key() { 
 		castles->AddRange(1, 128);
 
 		for (int i = 1; i < 128; i++) {
@@ -165,41 +191,48 @@ public:
 		castles->Clear();
 	}
 
-	void Test_Checked_Greater_Than_Placement(std::vector<Key>& initial_keys, Key test_key, bool require_indexed_end_element) {
-		// INITIAL KEYVECTOR SETUP
-		Key Next_Element = castles->Length() + 1;
-		if (test_key <= Next_Element) { std::cout << "Invalid test key\n"; return; }
+	void Test_Add_Lesser_Key_Branch_1() {
+		auto& indices = castles->GetIndexArray();
 
-		bool valid = Is_Valid_Initial_Vector(initial_keys, test_key);
-		if (!valid) { std::cout << "Invalid test key\n"; return; }
+		castles->AddRange(1, 6);
+		castles->Add(25);
+		castles->AddRange(7, 25);
+		castles->Add(6);
 
-		castles->BuildFromVector(initial_keys);
-
-		valid = Try_Generate_Length_Plus_One_State(*castles, test_key, require_indexed_end_element);
-		if (!valid) { std::cout << "Unsuitable initial_keys vector\n"; _status = false; return; } // Failed to get good KeyVector state
-
-		// WRITE DATA FOR TEST KEY
-		auto& castle = castles->Find(test_key);
-		castle.damage_level = 2525; // Need a better way to test custom values...
-		castle.armor_level = 3636;
-
-		// GET RELEVANT KEYS THAT ARE POSSIBLY AFFECTED
-		Key overwrite_key = castles->FindIndex(test_key);
-		Key indexed_end_element = castles->FindIndex(Next_Element);
+		if (indices[6] != 6)		{ _status = false; }
+		if (indices[25] != 25)	{ _status = false; }
 		
-		// BUMP TEST KEY TO A NEW POSITION
-		castles->Add(overwrite_key);
+		castles->Clear();
+	}
+	
+	void Test_Add_Lesser_Key_Branch_2() {
+		auto& indices = castles->GetIndexArray();
 
-		bool test_status;
-		if (!require_indexed_end_element) {
-			test_status = Confirm_Key_At_End_Is_Valid(test_key);
-		}
-		else {
-			test_status = Confirm_Key_At_Index_Is_Valid(test_key, indexed_end_element);
-		}
+		castles->AddRange(1, 6);
+		castles->Add(25);
+		castles->Add(6);
+		
+		if (indices[6] != 6)	{ _status = false; }
+		if (indices[7] != 25) { _status = false; }
+		if (indices[25] != 7) { _status = false; }
+		
+		castles->Clear();
+	}
+	
+	void Test_Add_Lesser_Key_Branch_3() {
+		auto& indices = castles->GetIndexArray();
 
-		if (!test_status) { _status = false; }
-
+		castles->AddRange(1, 6);
+		castles->Add(25);
+		castles->Add(17);
+		castles->AddRange(8, 17);
+		castles->Add(6);
+		
+		if (indices[6] != 6)	{ _status = false; }
+		if (indices[17] != 17) { _status = false; }
+		if (indices[25] != 7) { _status = false; }
+		if (indices[7] != 25) { _status = false; }
+		
 		castles->Clear();
 	}
 
