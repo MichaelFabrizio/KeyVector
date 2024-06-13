@@ -6,6 +6,7 @@
 #include <cassert>
 
 #include <Logic_Tests.h>
+#include <randomized_set.h>
 
 int main()
 {
@@ -44,6 +45,9 @@ int main()
 	test_placement_logic.Test_Remove_Lesser_Key_Branch_2();
 
 	test_placement_logic.Test_Values();
+
+	Randomized_Set randomSet = Randomized_Set(1, 255);
+	randomSet.GetRandom();
 	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 
