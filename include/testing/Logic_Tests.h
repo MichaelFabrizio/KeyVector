@@ -1,5 +1,7 @@
 #include <Pool.h>
 #include <vector>
+#include <iterator> // For std::forward_iterator_tag
+#include <cstddef>  // For std::ptrdiff_t
 
 struct Castle { 
 	Castle() : damage_level(200), armor_level(50) {}
@@ -334,6 +336,20 @@ public:
 		if (indices[50] != 28)	{ _status = false; }
 
 		castles->Clear();
+	}
+
+	void Test_Values() {
+		auto& indices = castles->GetIndexArray();
+		castles->AddRange(1, 11);
+
+		for (int i = 0; i < 8; i++) {
+			auto& castle = castles->Find(i);
+			castle.damage_level = i;
+		}
+
+		for (Castle& castle : *castles) {
+			std::cout << "Castle: " << castle.damage_level << '\n';
+		}
 	}
 
 	bool Return_Test_Status() {

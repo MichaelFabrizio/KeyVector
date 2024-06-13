@@ -43,6 +43,8 @@ int main()
 	test_placement_logic.Test_Remove_Lesser_Key_Branch_1();
 	test_placement_logic.Test_Remove_Lesser_Key_Branch_2();
 
+	test_placement_logic.Test_Values();
+	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 
 	return 0;

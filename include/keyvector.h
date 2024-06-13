@@ -3,6 +3,8 @@
 #include <iostream> // For debugging purposes
 #include <new>
 #include <vector>
+#include <iterator> // For std::forward_iterator_tag
+#include <cstddef>  // For std::ptrdiff_t
 
 class BaseVec {
 public:
@@ -207,6 +209,39 @@ public:
       (_data_head + i)->~T();
     }
   }
+
+  // Iterator implementation which is discussed in this blog:
+  // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+  struct Iterator {
+    // Iterator tags here
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type   = std::ptrdiff_t;
+    using value_type        = T;
+    using pointer           = T*;
+    using reference         = T&;
+
+    // Iterator constructors here
+    Iterator(T* ptr) : m_ptr(ptr) {}
+
+    reference operator*() const { return *m_ptr; }
+    pointer operator->() { return m_ptr; }
+
+    // Prefix increment
+    Iterator& operator++() { m_ptr++; return *this; }  
+
+    // Postfix increment
+    Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+
+    friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
+    friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
+
+  private:
+    pointer m_ptr;
+
+  };
+    
+  Iterator begin() { return Iterator(std::launder(reinterpret_cast<T*>(_data))); }
+  Iterator end()   { return Iterator(std::launder(reinterpret_cast<T*>(_data + (_length + 1) * sizeof(T)))); }
 
   void Add(const Key key) {
     if (key == 0 || key >= N)       { return; } // Invalid key bounds (0 will require it's own methods)
