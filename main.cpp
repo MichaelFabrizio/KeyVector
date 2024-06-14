@@ -46,8 +46,9 @@ int main()
 
 	test_placement_logic.Test_Values();
 
-	Randomized_Set randomSet = Randomized_Set(1, 255);
-	randomSet.GetRandom();
+	Randomized_Set randomSet = Randomized_Set<1, 255>();
+	randomSet.ShuffleRandom(200);
+	//randomSet.Debug();
 	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 
