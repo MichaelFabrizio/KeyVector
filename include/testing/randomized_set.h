@@ -51,6 +51,8 @@ public:
 	
     }
 
+    std::vector<Key>& GetKeys() { return random_set; }
+
     void Debug() {
 	for (auto key : random_set) {
 	    std::cout << "Key: " << key << '\n';

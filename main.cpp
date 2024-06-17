@@ -7,6 +7,7 @@
 
 #include <Logic_Tests.h>
 #include <randomized_set.h>
+#include <sequencer.h>
 
 int main()
 {
@@ -50,6 +51,10 @@ int main()
 	randomSet.SetRange(50, 75);													 //	Restrict the range of generated keys
 	randomSet.ShuffleRandom(200);												 // Shuffle should be appropriately sized for the range size
 	//randomSet.Debug();
+	auto& set = randomSet.GetKeys();
+	
+	Sequencer sequencer;
+	sequencer.Add_Sequence(set, Operation::Add);
 	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
 
