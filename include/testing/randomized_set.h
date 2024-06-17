@@ -5,11 +5,11 @@
 
 template <std::size_t MinKeyValue, std::size_t MaxKeyValue> // MaxKeyValue = The last valid element. For example, an array T[N] would have a MaxKeyValue of (N-1).
 class Randomized_Set {
-
-public:
     typedef std::size_t Key;
 
-    Randomized_Set() : gen(rd()), distrib(MinKeyValue, MaxKeyValue) {
+public:
+
+    Randomized_Set() : gen(rd()), _lower_bound(MinKeyValue), _upper_bound(MaxKeyValue)  {
 	static_assert(MinKeyValue < MaxKeyValue, "Invalid Randomized_Set bounds\n");
 	for (int i = MinKeyValue; i < MaxKeyValue; i++) {
 	    random_set.push_back(i);
@@ -22,6 +22,8 @@ public:
 	    reasonable_count = 10000;
 	}
 
+	std::uniform_int_distribution<Key> distrib(0, random_set.size() - 1);
+	
 	for (int i = 0; i < reasonable_count; i++) {
 	    std::size_t first_index = distrib(gen);
 	    std::size_t second_index = distrib(gen);
@@ -34,6 +36,21 @@ public:
 	}
     }
 
+    void SetRange(Key lower_bound, Key upper_bound) {
+	if (lower_bound >= upper_bound) { return; } // No change cases
+	if (lower_bound < MinKeyValue) { return; }
+	if (upper_bound > MaxKeyValue) { return; }
+
+	_lower_bound = lower_bound;
+	_upper_bound = upper_bound;
+
+	random_set.clear();
+	for (int i = _lower_bound; i < (_upper_bound + 1); i++) {
+	    random_set.push_back(i);
+	}
+	
+    }
+
     void Debug() {
 	for (auto key : random_set) {
 	    std::cout << "Key: " << key << '\n';
@@ -43,6 +60,10 @@ public:
 private:
     std::random_device rd;  // a seed source for the random number engine
     std::mt19937 gen; // mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> distrib;
+
+    Key _lower_bound;
+    Key _upper_bound;
+
+
     std::vector<std::size_t> random_set;
 };

@@ -46,8 +46,9 @@ int main()
 
 	test_placement_logic.Test_Values();
 
-	Randomized_Set randomSet = Randomized_Set<1, 255>();
-	randomSet.ShuffleRandom(200);
+	Randomized_Set randomSet = Randomized_Set<1, 255>(); // 1 to 255 is the max allowable range of keys
+	randomSet.SetRange(50, 75);													 //	Restrict the range of generated keys
+	randomSet.ShuffleRandom(200);												 // Shuffle should be appropriately sized for the range size
 	//randomSet.Debug();
 	
 	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
