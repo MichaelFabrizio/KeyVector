@@ -79,5 +79,9 @@ castle_82.Wall_Level = 9001;
 
 ## Final considerations
 Uses a special hashing algorithm designed by myself. Looking for research contributors.
-
 Please report any runtime errors or memory errors, thank you.
+
+![Partial_Timelapse](https://github.com/MichaelFabrizio/KeyVector/assets/83029804/7b0b9fe6-d774-47a7-95a8-51bf7d462b0a)
+
+Author Note [6/18/24]: The KeyVector datastructure was researched fully independently by Mike Fabrizio. As of 6/18/24, all work in these libraries is attributable to the Author.
+
