@@ -51,7 +51,19 @@ public:
 	
     }
 
+    void SetShuffleMultiplier(std::size_t multiplier) {
+	if (multiplier > 100) { return; }
+
+	shuffle_multiplier = multiplier;
+    }
+
     std::vector<Key>& GetKeys() { return random_set; }
+
+    std::vector<Key>& GetShuffledKeys() { 
+	std::size_t shuffle_count = shuffle_multiplier * (_upper_bound - _lower_bound);
+	ShuffleRandom(shuffle_count);
+	return random_set;
+    }
 
     void Debug() {
 	for (auto key : random_set) {
@@ -66,6 +78,7 @@ private:
     Key _lower_bound;
     Key _upper_bound;
 
+    std::size_t shuffle_multiplier = 4;
 
     std::vector<std::size_t> random_set;
 };
