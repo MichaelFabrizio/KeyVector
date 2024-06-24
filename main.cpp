@@ -16,36 +16,8 @@ int main()
 	assert(sizeof(unsigned char) == 1);
 	assert(alignof(unsigned char) == 1);
 
-	// Test class which allocates a memory Pool and runs index calculations
-	Logic_Tests test_placement_logic;
-	
-	typedef std::size_t Key;
-
-	Key primary_test_key = 45;
-	std::vector<std::size_t> initial_keys { 7, 2, 3, 45, 5, 6, 15, 25 };
-	
-	test_placement_logic.Test_Clear();
-	
-	test_placement_logic.Test_Add_Any();
-	test_placement_logic.Test_Add_Any_2();
-	test_placement_logic.Test_Add_Any_3();
-	
-	test_placement_logic.Test_Add_Equal_Key();
-	
-	test_placement_logic.Test_Add_Greater_Key_Branch_1();
-	test_placement_logic.Test_Add_Greater_Key_Branch_2();
-	
-	test_placement_logic.Test_Add_Lesser_Key_Branch_1();
-	test_placement_logic.Test_Add_Lesser_Key_Branch_2();
-	test_placement_logic.Test_Add_Lesser_Key_Branch_3();
-
-	test_placement_logic.Test_Remove_Greater_Key_Branch_1();
-	test_placement_logic.Test_Remove_Greater_Key_Branch_2(initial_keys, primary_test_key);
-	
-	test_placement_logic.Test_Remove_Lesser_Key_Branch_1();
-	test_placement_logic.Test_Remove_Lesser_Key_Branch_2();
-
-	test_placement_logic.Test_Values();
+	Pool<524288, 4096> pool;
+	auto& TestKeyVector = pool.AddKeyVec<Castle, unsigned char, 256>();
 
 	Randomized_Set randomSet = Randomized_Set<1, 255>(); // 1 to 255 is the max allowable range of keys
 	randomSet.SetRange(50, 75);													 //	Restrict the range of generated keys
@@ -53,10 +25,11 @@ int main()
 	//randomSet.Debug();
 	auto& set = randomSet.GetKeys();
 	
-	Sequencer sequencer;
-	sequencer.Add_Sequence(set, Operation::Add);
-	
-	std::cout << "Test status: " << test_placement_logic.Return_Test_Status()	<< '\n';
+	Sequencer sequencer(TestKeyVector);
+	sequencer.Store_Sequence(set, Operation::Add);
+	sequencer.Process();
+	bool test_result = sequencer.Test_Values();
 
+	std::cout << "Sequencer Test Result: " << test_result << '\n';
 	return 0;
 }

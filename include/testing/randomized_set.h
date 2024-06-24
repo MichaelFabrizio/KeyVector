@@ -11,6 +11,7 @@ public:
 
     Randomized_Set() : gen(rd()), _lower_bound(MinKeyValue), _upper_bound(MaxKeyValue)  {
 	static_assert(MinKeyValue < MaxKeyValue, "Invalid Randomized_Set bounds\n");
+	static_assert(MaxKeyValue < 10000, "MaxKeyValue restricted to <10000\n");
 	for (int i = MinKeyValue; i < MaxKeyValue; i++) {
 	    random_set.push_back(i);
 	}
