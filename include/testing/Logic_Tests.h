@@ -350,6 +350,8 @@ public:
 		for (Castle& castle : *castles) {
 			std::cout << "Castle: " << castle.damage_level << '\n';
 		}
+
+		castles->Clear();
 	}
 
 	bool Return_Test_Status() {
