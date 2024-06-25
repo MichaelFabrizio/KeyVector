@@ -8,10 +8,11 @@ enum class Operation {
 	Remove,
 };
 
+template <std::size_t MaxKeyValue>
 class Sequencer {
 	typedef std::size_t Key;
 	typedef std::vector<std::vector<Key>> Sequences;
-	typedef KeyVector<Castle, unsigned char, 256> KeyVec_256;
+	typedef KeyVector<Castle, unsigned char, MaxKeyValue> KeyVec;
 
 	void Process_Add_Sequence(std::vector<Key>& add_keys) {
 		for (auto key : add_keys) {
@@ -37,11 +38,14 @@ class Sequencer {
 			case Operation::Remove:
 				Process_Remove_Sequence(keys);
 				break;
+			default:
+				break;
 		}
 	}
 
 public:
-	Sequencer(KeyVec_256& TestKeyVector) : testkeyvector(TestKeyVector) {
+	Sequencer(KeyVec& TestKeyVector) : testkeyvector(TestKeyVector) {
+		static_assert(MaxKeyValue < 10000, "MaxKeyValue restricted to <10000\n");
 		auto& zero_value = testkeyvector.Find(0);
 		zero_value.damage_level = 0;
 	}
@@ -93,5 +97,5 @@ private:
 	Sequences _sequences;
 	std::vector<Operation> _operation_sequence;
 	
-	KeyVec_256& testkeyvector;
+	KeyVec& testkeyvector;
 };

@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-template <std::size_t MinKeyValue, std::size_t MaxKeyValue> // MaxKeyValue = The last valid element. For example, an array T[N] would have a MaxKeyValue of (N-1).
+template <std::size_t MinKeyValue, std::size_t MaxKeyValue> // MaxKeyValue = One-Past-End element. For example, an array T[N] would have a MaxKeyValue of N.
 class Randomized_Set {
     typedef std::size_t Key;
 
@@ -46,7 +46,7 @@ public:
 	_upper_bound = upper_bound;
 
 	random_set.clear();
-	for (int i = _lower_bound; i < (_upper_bound + 1); i++) {
+	for (int i = _lower_bound; i < _upper_bound; i++) {
 	    random_set.push_back(i);
 	}
 	
