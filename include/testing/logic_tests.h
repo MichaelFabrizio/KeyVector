@@ -342,7 +342,7 @@ public:
 	}
 
 private:
-	KeyVec testkeyvector;
+	KeyVec& testkeyvector;
 
 	// Eventually change to a vector<string TestName, bool Result> (so we can store multiple failed tests)
 	bool _status = true;

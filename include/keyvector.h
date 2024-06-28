@@ -210,6 +210,16 @@ public:
     }
   }
 
+  KeyVector(KeyVector&)         = delete;
+  KeyVector(const KeyVector&)   = delete;
+  KeyVector(KeyVector&&)        = delete;
+  KeyVector(const KeyVector&&)  = delete;
+  
+  KeyVector& operator=(KeyVector&)        = delete;
+  KeyVector& operator=(const KeyVector&)  = delete;
+  KeyVector& operator=(KeyVector&&)       = delete;
+  KeyVector& operator=(const KeyVector&&) = delete;
+
   // Iterator implementation which is discussed in this blog:
   // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
   struct Iterator {
