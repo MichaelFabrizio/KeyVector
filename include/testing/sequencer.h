@@ -2,6 +2,8 @@
 #include <vector>
 #include <iostream>
 
+#include <value_test_object.h>
+
 // Will be moved and expanded
 enum class Operation {
 	Add,

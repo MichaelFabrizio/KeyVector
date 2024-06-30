@@ -3,22 +3,10 @@
 #include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
 
-struct Castle { 
-	Castle() : damage_level(200), armor_level(50) {}
-	unsigned int armor_level;
-	unsigned int damage_level;
+#include <value_test_object.h>
+#include <sequencer.h>
 
-	bool operator==(const Castle& rhs) {
-		bool maybe_equal = true;
-
-		if (this->armor_level != rhs.armor_level)		{ maybe_equal = false; }
-		if (this->damage_level != rhs.damage_level) { maybe_equal = false; }
-
-		return maybe_equal;
-	}
-};
-
-// Testing class: Allocates memory, writes data in a certain way, reads values
+// Testing class: Writes keyvector data in a certain way, reads values
 class Logic_Tests {
 	typedef std::size_t Key;
 	typedef KeyVector<Castle, unsigned char, 256> KeyVec;
@@ -102,7 +90,7 @@ class Logic_Tests {
 	}
 
 public:
-	Logic_Tests(KeyVec& TestKeyVector) : testkeyvector(TestKeyVector) {
+	Logic_Tests(KeyVec& TestKeyVector) : testkeyvector(TestKeyVector), sequencer(TestKeyVector) {
 	}
 
 	void Test_Add_Any() {
@@ -343,6 +331,8 @@ public:
 
 private:
 	KeyVec& testkeyvector;
+	
+	Sequencer<256> sequencer;
 
 	// Eventually change to a vector<string TestName, bool Result> (so we can store multiple failed tests)
 	bool _status = true;
