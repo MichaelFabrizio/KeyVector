@@ -52,6 +52,11 @@ public:
 		zero_value.damage_level = 0;
 	}
 
+	void Clear() {
+		_sequences.clear();
+		_operation_sequence.clear();
+	}
+
 	void Store_Sequence(std::vector<Key>& keys, Operation operation) {
 		switch (operation) {
 			case Operation::Add:
@@ -79,20 +84,6 @@ public:
 			Process_Switch_Cases(vec, _operation_sequence[i]);
 			i++;
 		}
-	}
-	
-	// Will be moving this into logic_tests.h,
-	bool Test_Values() {
-		auto& indices = testkeyvector.GetIndexArray();
-
-		int i = 0;
-		for (auto& value : testkeyvector) {
-			if (value.damage_level != indices[i]) {
-				return false;
-			}
-			i++;
-		}
-		return true;
 	}
 
 private:

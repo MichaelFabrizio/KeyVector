@@ -1,8 +1,9 @@
-#include <Pool.h>
 #include <vector>
 #include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
 
+#include <keyvector.h>
+#include <randomized_set.h>
 #include <value_test_object.h>
 #include <sequencer.h>
 
@@ -325,6 +326,29 @@ public:
 		testkeyvector.Clear();
 	}
 
+	void Test_Values() {
+		auto& indices = testkeyvector.GetIndexArray();
+
+		int i = 0;
+		for (auto& value : testkeyvector) {
+			if (value.damage_level != indices[i]) {
+				_status = false; return;
+			}
+			i++;
+		}
+	}
+
+	// Applies keyvector Add/Remove operations with a range of keys (lower_bound, upper_bound),
+	// The keys are shuffled randommly
+	void Apply_Random_Key_Operation(Key lower_bound, Key upper_bound, Operation operation) {
+		randomset.SetRange(lower_bound, upper_bound); // Will do nothing if keys are outside range (1,256), currently
+		std::vector<Key>& keys = randomset.GetShuffledKeys();
+
+		sequencer.Store_Sequence(keys, operation);	// Stores the keys to be Added/Removed
+		sequencer.Process();												// Runs the Add/Remove operation
+		sequencer.Clear();													// Clears the stored keys (default test, optional)
+	}
+
 	bool Return_Test_Status() {
 		return _status;
 	}
@@ -333,6 +357,7 @@ private:
 	KeyVec& testkeyvector;
 	
 	Sequencer<256> sequencer;
+	Randomized_Set<1, 256> randomset;
 
 	// Eventually change to a vector<string TestName, bool Result> (so we can store multiple failed tests)
 	bool _status = true;
