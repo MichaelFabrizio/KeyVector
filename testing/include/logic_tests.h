@@ -1,24 +1,13 @@
-#include <Pool.h>
 #include <vector>
 #include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
 
-struct Castle { 
-	Castle() : damage_level(200), armor_level(50) {}
-	unsigned int armor_level;
-	unsigned int damage_level;
+#include <keyvector.h>
+#include <randomized_set.h>
+#include <value_test_object.h>
+#include <sequencer.h>
 
-	bool operator==(const Castle& rhs) {
-		bool maybe_equal = true;
-
-		if (this->armor_level != rhs.armor_level)		{ maybe_equal = false; }
-		if (this->damage_level != rhs.damage_level) { maybe_equal = false; }
-
-		return maybe_equal;
-	}
-};
-
-// Testing class: Allocates memory, writes data in a certain way, reads values
+// Testing class: Writes keyvector data in a certain way, reads values
 class Logic_Tests {
 	typedef std::size_t Key;
 	typedef KeyVector<Castle, unsigned char, 256> KeyVec;
@@ -102,42 +91,12 @@ class Logic_Tests {
 	}
 
 public:
-	Logic_Tests(KeyVec& TestKeyVector) : testkeyvector(TestKeyVector) {
+	Logic_Tests(KeyVec& TestKeyVector) : testkeyvector(TestKeyVector), sequencer(TestKeyVector) {
 	}
 
-	void Test_Add_Any() {
-		// TEST CASE 1: AddAny() with INDEXED END ELEMENT. 
-		// In this test: _indices[7] = _indices[_Length + 1] = 1 (it is indexed)
-
-		std::vector<std::size_t> test_keys { 7, 2, 3, 4, 5, 6 };
-		testkeyvector.BuildFromVector(test_keys);
-		
-		auto added_key = testkeyvector.AddAny();
-
-		if (testkeyvector.FindIndex(7) != 7) { _status = false; }
-		else if (added_key != 1)				{ _status = false; }
-		
-		testkeyvector.Clear();
-	}
+	void Test_Add_Any();
 	
-	void Test_Add_Any_2() {
-		std::vector<std::size_t> test_keys { 7, 2, 3, 45, 5, 6, 15, 25 };
-		testkeyvector.BuildFromVector(test_keys);
-
-		Key added_key = 0;
-		while (true) {
-			auto location_45 = testkeyvector.FindIndex(45);
-
-			if (location_45 != 4) {
-				if (added_key != 4) { _status = false; }
-				testkeyvector.Clear();
-				return;
-			}
-			else {
-				added_key = testkeyvector.AddAny();
-			}
-		}
-	}
+	void Test_Add_Any_2();
 
 	void Test_Add_Any_3() {
 		for (int i = 0; i < 10; i++) {
@@ -337,12 +296,38 @@ public:
 		testkeyvector.Clear();
 	}
 
+	void Test_Values() {
+		auto& indices = testkeyvector.GetIndexArray();
+
+		int i = 0;
+		for (auto& value : testkeyvector) {
+			if (value.damage_level != indices[i]) {
+				_status = false; return;
+			}
+			i++;
+		}
+	}
+
+	// Applies keyvector Add/Remove operations with a range of keys (lower_bound, upper_bound),
+	// The keys are shuffled randommly
+	void Apply_Random_Key_Operation(Key lower_bound, Key upper_bound, Operation operation) {
+		randomset.SetRange(lower_bound, upper_bound); // Will do nothing if keys are outside range (1,256), currently
+		std::vector<Key>& keys = randomset.GetShuffledKeys();
+
+		sequencer.Store_Sequence(keys, operation);	// Stores the keys to be Added/Removed
+		sequencer.Process();												// Runs the Add/Remove operation
+		sequencer.Clear();													// Clears the stored keys (default test, optional)
+	}
+
 	bool Return_Test_Status() {
 		return _status;
 	}
 
 private:
 	KeyVec& testkeyvector;
+	
+	Sequencer<256> sequencer;
+	Randomized_Set<1, 256> randomset;
 
 	// Eventually change to a vector<string TestName, bool Result> (so we can store multiple failed tests)
 	bool _status = true;

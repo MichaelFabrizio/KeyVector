@@ -66,6 +66,9 @@ public:
 	return random_set;
     }
 
+    Key GetLowerBound() { return _lower_bound; }
+    Key GetUpperBound() { return _upper_bound; }
+
     void Debug() {
 	for (auto key : random_set) {
 	    std::cout << "Key: " << key << '\n';
