@@ -5,15 +5,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-project(prog)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(prog main.cpp)
+project(keyvector)
 
-target_include_directories(prog PUBLIC  "./include")
-target_include_directories(prog PUBLIC  "./include/testing")
-
-target_compile_definitions(prog PUBLIC  "$<$<CONFIG:DEBUG>:DEBUG>"
-                                        "$<$<CONFIG:RELEASE>:RELEASE>")
+add_subdirectory(testing)
