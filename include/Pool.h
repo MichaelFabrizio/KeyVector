@@ -1,23 +1,22 @@
 #pragma once
 #include <iostream>
 #include <stdlib.h>   // aligned_alloc
-#include <limits>     // numeric_limits<T>
 #include <algorithm>  // max
 #include <vector>
 
 #include <keyvector.h>
 
-const static std::size_t PAGE_SIZE = 4096;
+constexpr static std::size_t PAGE_SIZE = 4096;
 
 // A no-exception pool
 // *Must* be initialized at program start before all other processes.
 // Aborts itself if anything goes wrong.
 // If successful, end-user can create a guaranteed reference, for example: 
-// auto& hset = AddHSet<Type, unsigned char, 256>()
+// auto& keyvec = AddKeyVec<Type, unsigned char, 256>()
 //
-// **All HSet references stay valid for the lifetime of Pool.
+// **All KeyVector references stay valid for the lifetime of Pool.
 //
-// N is the total pool size in bytes
+// N is the total pool size (memory allocation) in bytes
 template <std::size_t N, std::size_t align>
 class Pool {
 public:
@@ -34,34 +33,8 @@ public:
     assert ((sizeof(Index) % alignof(Index)) == 0);
     assert ((sizeof(Type) % alignof(Type)) == 0);
     
-    // Index needs to be an unsigned integer type
-    if (!std::numeric_limits<Index>::is_integer || std::numeric_limits<Index>::is_signed) {
-      std::cout << "Index must be an unsigned integer type\n";
-      this->~Pool();
-      abort();
-    }
-    
-    // Index needs to be a type large enough to hold HSetSize elements
-    std::size_t Index_max_representation = (std::numeric_limits<Index>::max() + 1);
-    std::cout << "New KeyVector" << '\n';
-    std::cout << "Max keys representable: " << Index_max_representation  << '\n';
-    std::cout << std::endl;
-
-    if (HSetSize > Index_max_representation) {
-      std::cout << "[WARNING] HSetSize larger than Index type can represent\n";
-      this->~Pool();
-      abort();
-    }
-
-    if (HSetSize == 0) {
-      std::cout << "[WARNING] HSetSize cannot be zero\n";
-      this->~Pool();
-      abort();
-    }
-    
-    // Implicit: HSetSize < Index_max_representation
-    std::size_t HSetAlignment = alignof(KeyVector<Type, Index, HSetSize>);
-    std::size_t HSetByteSize = sizeof(KeyVector<Type, Index, HSetSize>);
+    constexpr std::size_t HSetAlignment = alignof(KeyVector<Type, Index, HSetSize>);
+    constexpr std::size_t HSetByteSize = sizeof(KeyVector<Type, Index, HSetSize>);
 
     std::cout << "Type Alignment: " << alignof(Type) << '\n';
     std::cout << "Index Alignment: " << alignof(Index) << '\n';
@@ -77,7 +50,7 @@ public:
     }
 
     // PAGE_SIZE must be a multiple of HSetAlignment
-    assert(PAGE_SIZE % HSetAlignment == 0);
+    static_assert(PAGE_SIZE % HSetAlignment == 0);
     
     // Not needed, testing purposes
     std::size_t Full_Pages_Used = HSetByteSize / PAGE_SIZE;

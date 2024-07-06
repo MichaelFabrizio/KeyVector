@@ -5,6 +5,8 @@
 #include <vector>
 #include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
+#include <type_traits> // For is_trivial_destructible_v<T>
+#include <limits>     // For numeric_limits<I>
 
 class BaseVec {
 public:
@@ -197,6 +199,12 @@ class KeyVector : public BaseVec {
 
 public:
   KeyVector() : _length(0), _capacity(N), _indices {0} {
+    static_assert(std::is_trivially_destructible_v<T>,      "[KeyVector] Only trivial destructor types supported right now");
+    static_assert(std::numeric_limits<I>::is_integer,       "[KeyVector] Index type must be an integer type");
+    static_assert(!std::numeric_limits<I>::is_signed,       "[KeyVector] Index type must be an unsigned type");
+    static_assert(N != 0,                                   "[KeyVector] Number of elements cannot be zero");
+    static_assert(N <= (std::numeric_limits<I>::max() + 1), "[KeyVector] More elements than index type can represent");
+
     // Default initialize _data[0] element
     T* _data_head = reinterpret_cast<T*>(_data);
     ::new (_data_head) T();
