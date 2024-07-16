@@ -3,6 +3,7 @@
 #include <stdlib.h>   // aligned_alloc
 #include <algorithm>  // max
 #include <vector>
+#include <cstddef>    // For max_align_t
 
 #include <keyvector.h>
 
@@ -30,10 +31,10 @@ public:
   // KeyVecSize - The quantity of unique ID keys this set will hold
   template<typename Type, typename Index, std::size_t KeyVecSize>
   KeyVector<Type, Index, KeyVecSize>& AddKeyVec() {
-    static_assert (alignof(Index) <= PAGE_SIZE, "[Pool::AddKeyVec()] Index alignment isn't valid");
-    static_assert (alignof(Type) <= PAGE_SIZE,  "[Pool::AddKeyVec()] Type alignment isn't valid");
-    static_assert (sizeof(Index) <= PAGE_SIZE,  "[Pool::AddKeyVec()] Index size isn't valid");
-    static_assert (sizeof(Type) <= PAGE_SIZE,   "[Pool::AddKeyVec()] Type size isn't valid");
+    static_assert (alignof(Index) <= alignof(std::max_align_t), "[Pool::AddKeyVec()] Index alignment isn't valid");
+    static_assert (alignof(Type) <= alignof(std::max_align_t),  "[Pool::AddKeyVec()] Type alignment isn't valid");
+    static_assert (sizeof(Index) <= PAGE_SIZE,                  "[Pool::AddKeyVec()] Index size isn't valid");
+    static_assert (sizeof(Type) <= PAGE_SIZE,                   "[Pool::AddKeyVec()] Type size isn't valid");
 
     // Testing purposes
     static_assert ((sizeof(Index) % alignof(Index)) == 0);
