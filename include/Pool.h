@@ -8,6 +8,12 @@
 
 constexpr static std::size_t PAGE_SIZE = 4096;
 
+constexpr static std::size_t MAX_SUPPORTED_ALIGN = 4096;              // 4 KiB - Maximum allocation alignment.
+                                                                      // Modifiable by the end user - given they take responsibility for their own hardware memory limits.
+
+constexpr static std::size_t MAX_SUPPORTED_SIZE = 1024 * 1024 * 1024; // 1 GiB - Maximum allocation size.
+                                                                      // Modifiable by the end user - given they take responsibility for their own hardware memory limits.
+
 // A no-exception pool
 // *Must* be initialized at program start before all other processes.
 // Aborts itself if anything goes wrong.
@@ -120,6 +126,14 @@ public:
       std::cout << "Size must be multiple of align\n";
       abort();
     }
+
+    // Need to avoid hardcoding the error message for MAX_SUPPORTED_SIZE
+    static_assert(N <= MAX_SUPPORTED_SIZE, 
+      "[Pool()] Requested allocation size is too large. MAX_SUPPORTED_SIZE = 1 GiB.");
+    
+    // Need to avoid hardcoding the error message for MAX_SUPPORTED_ALIGN
+    static_assert(align <= MAX_SUPPORTED_ALIGN, 
+      "[Pool()] Requested allocation align is too large. MAX_SUPPORTED_ALIGN = 4 KiB.");
 
     _lead_ptr = std::aligned_alloc(align, N);
 
